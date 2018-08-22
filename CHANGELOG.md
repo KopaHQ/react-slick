@@ -2,6 +2,14 @@
 
 ## [Unreleased](https://github.com/akiran/react-slick/tree/HEAD)
 
+## 0.24.3
+
+**Release Changes**
+
+- Bug fixes
+
+  - Explicitly setting to be not-passive to fix iOS 11.3 issue (from HelKyle:patch-1)
+
 ## 0.24.2
 
 **Release Changes**
