@@ -19,7 +19,7 @@ import {
   swipeEnd,
   getPreClones,
   getPostClones,
-  getTrackLeft,
+  getTrackPositionProperties,
   getTrackCSS
 } from "./utils/innerSliderUtils";
 
@@ -36,6 +36,7 @@ export class InnerSlider extends React.Component {
     this.state = {
       ...initialState,
       currentSlide: this.props.initialSlide,
+      lastSlideIsInView: false,
       slideCount: React.Children.count(this.props.children)
     };
     this.callbackTimers = [];
@@ -224,7 +225,7 @@ export class InnerSlider extends React.Component {
   updateState = (spec, setTrackStyle, callback) => {
     let updatedState = initializedState(spec);
     spec = { ...spec, ...updatedState, slideIndex: updatedState.currentSlide };
-    let targetLeft = getTrackLeft(spec);
+    let targetLeft = getTrackPositionProperties(spec).targetLeft;
     spec = { ...spec, left: targetLeft };
     let trackStyle = getTrackCSS(spec);
     if (
@@ -621,7 +622,8 @@ export class InnerSlider extends React.Component {
       "variableWidth",
       "unslick",
       "noRightPadding",
-      "centerPadding"
+      "centerPadding",
+      "lastSlideIsInView"
     ]);
     const { pauseOnHover } = this.props;
     trackProps = {
@@ -668,7 +670,8 @@ export class InnerSlider extends React.Component {
       "slideCount",
       "slidesToShow",
       "prevArrow",
-      "nextArrow"
+      "nextArrow",
+      "lastSlideIsInView"
     ]);
     arrowProps.clickHandler = this.changeSlide;
 
@@ -719,7 +722,7 @@ export class InnerSlider extends React.Component {
     let innerSliderProps = {
       className: className,
       dir: "ltr",
-      style:this.props.style
+      style: this.props.style
     };
 
     if (this.props.unslick) {

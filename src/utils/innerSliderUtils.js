@@ -80,7 +80,8 @@ export const canGoNext = spec => {
       canGo = false;
     } else if (
       spec.slideCount <= spec.slidesToShow ||
-      spec.currentSlide >= spec.slideCount - spec.slidesToShow
+      spec.currentSlide >= spec.slideCount - spec.slidesToShow ||
+      spec.lastSlideIsInView
     ) {
       canGo = false;
     }
@@ -140,7 +141,8 @@ export const initializedState = spec => {
     currentSlide,
     slideHeight,
     listHeight,
-    lazyLoadedList
+    lazyLoadedList,
+    lastSlideIsInView: spec.lastSlideIsInView
   };
 
   if (spec.autoplaying === null && spec.autoplay) {
@@ -206,8 +208,18 @@ export const slideHandler = spec => {
       if (!infinite) finalSlide = slideCount - slidesToShow;
       else if (slideCount % slidesToScroll !== 0) finalSlide = 0;
     }
-    animationLeft = getTrackLeft({ ...spec, slideIndex: animationSlide });
-    finalLeft = getTrackLeft({ ...spec, slideIndex: finalSlide });
+
+    var animationTrackPositionProperties = getTrackPositionProperties({
+      ...spec,
+      slideIndex: animationSlide
+    });
+    var finalTrackPositionProperties = getTrackPositionProperties({
+      ...spec,
+      slideIndex: finalSlide
+    });
+    animationLeft = animationTrackPositionProperties.targetLeft;
+    finalLeft = finalTrackPositionProperties.targetLeft;
+
     if (!infinite) {
       if (animationLeft === finalLeft) animationSlide = finalSlide;
       animationLeft = finalLeft;
@@ -226,12 +238,14 @@ export const slideHandler = spec => {
       state = {
         animating: true,
         currentSlide: finalSlide,
+        lastSlideIsInView: animationTrackPositionProperties.lastSlideIsInView,
         trackStyle: getTrackAnimateCSS({ ...spec, left: animationLeft }),
         lazyLoadedList
       };
       nextState = {
         animating: false,
         currentSlide: finalSlide,
+        lastSlideIsInView: animationTrackPositionProperties.lastSlideIsInView,
         trackStyle: getTrackCSS({ ...spec, left: finalLeft }),
         swipeLeft: null
       };
@@ -345,7 +359,7 @@ export const swipeMove = (e, spec) => {
   if (vertical && swipeToSlide && verticalSwiping) e.preventDefault();
   let swipeLeft,
     state = {};
-  let curLeft = getTrackLeft(spec);
+  let curLeft = getTrackPositionProperties(spec).targetLeft;
   touchObject.curX = e.touches ? e.touches[0].pageX : e.clientX;
   touchObject.curY = e.touches ? e.touches[0].pageY : e.clientY;
   touchObject.swipeLength = Math.round(
@@ -477,7 +491,7 @@ export const swipeEnd = (e, spec) => {
     state["triggerSlideHandler"] = slideCount;
   } else {
     // Adjust the track back to it's original position.
-    let currentLeft = getTrackLeft(spec);
+    let currentLeft = getTrackPositionProperties(spec).targetLeft;
     state["trackStyle"] = getTrackAnimateCSS({ ...spec, left: currentLeft });
   }
   return state;
@@ -640,7 +654,7 @@ export const getTrackAnimateCSS = spec => {
   }
   return style;
 };
-export const getTrackLeft = spec => {
+export const getTrackPositionProperties = spec => {
   if (spec.unslick) {
     return 0;
   }
@@ -681,6 +695,7 @@ export const getTrackLeft = spec => {
   var targetLeft;
   var targetSlide;
   var verticalOffset = 0;
+  var lastSlideIsInView = false;
 
   if (fade || spec.slideCount === 1) {
     return 0;
@@ -745,6 +760,8 @@ export const getTrackLeft = spec => {
         if (targetLeft >= 0) {
           targetLeft = 0;
         }
+
+        lastSlideIsInView = true;
       }
     }
     if (centerMode === true) {
@@ -764,7 +781,7 @@ export const getTrackLeft = spec => {
     }
   }
 
-  return targetLeft;
+  return { targetLeft, lastSlideIsInView };
 };
 
 export const getPreClones = spec => {

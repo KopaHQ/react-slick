@@ -6,20 +6,20 @@ import {
   clickNext,
   clickPrev,
   tryAllConfigs,
-  actualTrackLeft,
-  testTrackLeft
+  actualTrackPositionProperties,
+  testTrackPositionProperties
 } from "./testUtils";
-import { getTrackLeft } from "../src/utils/innerSliderUtils";
+import { getTrackPositionProperties } from "../src/utils/innerSliderUtils";
 
 const testSettings = settings => {
   let slider = createInnerSliderWrapper(settings);
   for (let click = 0; click < settings.noOfSlides + 2; click++) {
-    testTrackLeft(slider);
+    testTrackPositionProperties(slider);
     clickNext(slider);
   }
   slider = createInnerSliderWrapper(settings);
   for (let click = 0; click < settings.noOfSlides + 2; click++) {
-    testTrackLeft(slider);
+    testTrackPositionProperties(slider);
     clickPrev(slider);
   }
 };

@@ -8,6 +8,7 @@ const initialState = {
   dragging: false,
   edgeDragged: false,
   initialized: false,
+  lastSlideIsInView: false,
   lazyLoadedList: [],
   listHeight: null,
   listWidth: null,

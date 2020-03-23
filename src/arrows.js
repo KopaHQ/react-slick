@@ -80,7 +80,8 @@ export class NextArrow extends React.PureComponent {
     };
     let customProps = {
       currentSlide: this.props.currentSlide,
-      slideCount: this.props.slideCount
+      slideCount: this.props.slideCount,
+      lastSlideIsInView: this.props.lastSlideIsInView
     };
     let nextArrow;
 
