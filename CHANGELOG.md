@@ -2,6 +2,14 @@
 
 ## [Unreleased](https://github.com/akiran/react-slick/tree/HEAD)
 
+## 0.25.3
+
+**Release Changes**
+
+- Bug fixes
+
+  - Disabling the next button when the last slide is already in view (from keithwillcode)
+
 ## 0.24.3
 
 **Release Changes**
